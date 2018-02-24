@@ -66,6 +66,8 @@ public class CassandraDatabaseUpgradeService implements DatabaseUpgradeService {
 
                 //Dump devices, assets and relations
 
+                cluster.getSession();
+
                 KeyspaceMetadata ks = cluster.getCluster().getMetadata().getKeyspace(cluster.getKeyspaceName());
 
                 log.info("Dumping devices ...");
@@ -156,6 +158,12 @@ public class CassandraDatabaseUpgradeService implements DatabaseUpgradeService {
 
                 break;
             case "1.3.0":
+                break;
+            case "1.3.1":
+                log.info("Updating schema ...");
+                schemaUpdateFile = Paths.get(this.dataDir, "upgrade", "1.4.0", SCHEMA_UPDATE_CQL);
+                loadCql(schemaUpdateFile);
+                log.info("Schema updated.");
                 break;
             default:
                 throw new RuntimeException("Unable to upgrade Cassandra database, unsupported fromVersion: " + fromVersion);
